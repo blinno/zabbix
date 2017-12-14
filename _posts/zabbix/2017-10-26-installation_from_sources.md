@@ -458,7 +458,7 @@ Zabbix前端准备好了！默认用户名为**Admin**，密码为**zabbix**。
 
 1. [如何为Zabbix守护程序配置共享内存](http://www.zabbix.org/wiki/How_to/configure_shared_memory)
 
-#### 附录
+### 附录
 
 1、若页面提示缺少"mbstring":PHP mbstring extension missing (PHP configuration parameter --enable-mbstring).
 解决方法：

@@ -255,6 +255,85 @@ shell> zabbix_agentd
 shell> zabbix_proxy
 ```
 
+
+#### 查看端口：
+```
+netstart -tnlp | grep ‘zabbix’
+```
+
+#### 停止zabbix服务：
+```
+pkill zabbix
+```
+#### 添加开机启动脚本
+从源码目录中复制脚本
+
+ //客户端
+```
+cp /root/zabbix-3.X/misc/init.d/tru64//zabbix_agentd /etc/rc.d/init.d/zabbix_agentd
+```
+
+//服务端
+```
+cp /root/zabbix-3.X/misc/init.d/tru64/zabbix_server /etc/init.d/    
+
+```
+
+然后执行
+```
+chmod 777 /etc/init.d/zabbix*
+```
+
+#### 修改zabbix_agentd、zabbix_server程序目录的位置：
+
+```
+vi /etc/init.d/zabbix_agentd
+
+DAEMON=/usr/local/zabbix/sbin/zabbix_agentd
+
+vim /etc/init.d/zabbix_server
+
+DAEMON=/usr/local/zabbix/sbin/zabbix_server
+```
+
+#### 启动zabbix服务：
+```
+service zabbix_agentd start
+
+service zabbix_server start
+```
+
+#### 添加开启启动
+```
+chkconfig --add zabbix_server
+
+chkconfig --add zabbix_agentd
+```
+
+#### 由于zabbix_server 服务不支持 chkconfig，使用下列方法自启动：
+  分别在 /etc/init.d/zabbix_agentd 和 /etc/init.d/zabbix_server 文件中添加对应的如下代码：
+
+```
+#chkconfig： 345 95 95        //三个参数：345代表不同的Level运行，第二个参数：启动序号61，第三个参数：关闭序号61
+
+#description: Zabbix_Server        //注意前面的‘#’不能取消掉，此行为描述
+```
+
+#### 然后再设置自启
+
+   在服务列表中增加此服务
+```
+chkconfig --add zabbix_server    
+
+chkconfig --add zabbix_agentd
+
+chkconfig zabbix_server on
+
+chkconfig zabbix_agentd on
+
+```
+
+
 #### 2 安装Zabbix Web界面 {#installing_zabbix_web_interface}
 
 ##### 复制PHP文件 {#copying_php_files}
@@ -379,5 +458,19 @@ Zabbix前端准备好了！默认用户名为**Admin**，密码为**zabbix**。
 
 1. [如何为Zabbix守护程序配置共享内存](http://www.zabbix.org/wiki/How_to/configure_shared_memory)
 
+#### 附录
 
-
+1、若页面提示缺少"mbstring":PHP mbstring extension missing (PHP configuration parameter --enable-mbstring).
+解决方法：
+```
+yum install -y php-mbstring
+```
+2、若浏览器上错误提示： Zabbix server is not running:be information displayed may not be current.    
+解决方法：
+```
+vi /var/www/html/zabbix/conf/zabbix.conf.php
+```
+修改ip为server的ip，非127.0.0.1，如：
+```
+$ZBX_SERVER = '192.168.0.114'; 
+```            
